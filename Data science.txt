@@ -1,0 +1,8 @@
+Data Science : 
+
+1. Algorithms and Analysis Part 1 : 42 hrs
+2. Algorithms and Analysis Part 2 : 60 hrs
+3. Analytics Edge : 180hrs
+4. Statistics : 
+5. Machine Learning by Andrew NG : 44 hours
+6. 

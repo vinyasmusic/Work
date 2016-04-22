@@ -1,0 +1,23 @@
+Analytics Edge
+
+R
+	 <- is equal to = (assignment operator)
+	ls() list of all variables created in the current session
+	c() stands for combine
+	R only allows one data  variable in a vector after c()
+	vector is addressed with vectorname[index] 1 based
+	rbind() to combine dataframes
+	str(variablename)
+	summary(variablename)
+	
+	which.min() gives row number
+	nrow() gives number of rows
+	hist()
+	boxplot(varibale1~varibale2) circles are outliers , middle line is median, dashed lines are whiskers, 
+	table(variable)
+	tapply(varibale1,variable2,mean)
+	tappy(who$literacyrate,who$region,min,na.rm=TRUE) - this removes all NA values hence giving correct min
+	subset(datavar,var_condition)
+	DateConvert = as.Date(strptime(mvt$Date, "%m/%d/%y %H:%M"))
+	factor() how does it work ? 
+	

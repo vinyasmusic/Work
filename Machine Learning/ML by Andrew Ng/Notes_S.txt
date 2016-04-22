@@ -1,0 +1,14 @@
+Week 1 : 
+	What is regression ? 
+	Statistical approach to forecasting change in a dependent variable (sales revenue, for example) on the basis of change in one or more independent variables (population and income, for example). Known also as curve fitting or line fitting because a regression analysis equation can be used in fitting a curve or line to data points, in a manner such that the differences in the distances of data points from the curve or line are minimized. Relationships depicted in a regression analysis are, however, associative only, and any cause-effect (causal) inference is purely subjective. Also called regression method or regression technique.
+
+
+
+	What is classification problem ? 
+	The classification problem is the problem that for many real-world objects and systems; coming up with an iron-clad classification system (to determine if an object is a member of a set or not, or which of several sets) is a difficult problem.
+
+	Important Link : https://www.quora.com/How-do-you-figure-out-which-is-a-classification-problem-and-which-is-a-regression-problem
+
+	Difference in supervised and unsupervised learning : https://www.quora.com/What-is-the-difference-between-supervised-and-unsupervised-learning-algorithms
+
+	
