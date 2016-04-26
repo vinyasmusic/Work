@@ -5,6 +5,10 @@ Amazon 2.png
 /Analytics Edge/Miscellaneous/*
 /**/*.RData
 /**/*.Rhistory
+/**/*.pdf
+/**/*.jpg
+/*.pdf
+/*.jpg
 
 # Windows image file caches
 Thumbs.db

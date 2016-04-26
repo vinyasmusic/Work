@@ -11,4 +11,11 @@ Week 1 :
 
 	Difference in supervised and unsupervised learning : https://www.quora.com/What-is-the-difference-between-supervised-and-unsupervised-learning-algorithms
 
+	Variables : 
+	m - Number of training examples
+	x's - input variable / features
+	y's - output variable / target feature
+
+	More uses of Squared error function?
+
 	

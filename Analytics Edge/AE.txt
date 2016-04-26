@@ -20,4 +20,11 @@ R
 	subset(datavar,var_condition)
 	DateConvert = as.Date(strptime(mvt$Date, "%m/%d/%y %H:%M"))
 	factor() how does it work ? 
+
+	tapply(data, factors or "groups", function)
+	Question: Which state has a proportion of interviewees living in a non-metropolitan area closest to 30%?
+	"Which state" --> factoring or grouping by state
+	"interviewees living in non-metropolitan area" ---> data the function "mean" is applied
+	An additional tip: If you sort the results of tapply() it's much easier to read the output and to find the solution.
+	sort(tapply(...), decreasing = TRUE/FALSE)
 	
