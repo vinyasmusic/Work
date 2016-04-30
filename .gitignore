@@ -32,6 +32,7 @@ $RECYCLE.BIN/
 ### IPythonNotebook ###
 # Temporary data
 .ipynb_checkpoints/
+//.ipynb_checkpoints/
 
 # =========================
 # Operating System Files

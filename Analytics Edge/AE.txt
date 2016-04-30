@@ -1,6 +1,6 @@
 Analytics Edge
 
-R
+Unit1
 	 <- is equal to = (assignment operator)
 	ls() list of all variables created in the current session
 	c() stands for combine
@@ -22,9 +22,29 @@ R
 	factor() how does it work ? 
 
 	tapply(data, factors or "groups", function)
+
 	Question: Which state has a proportion of interviewees living in a non-metropolitan area closest to 30%?
 	"Which state" --> factoring or grouping by state
 	"interviewees living in non-metropolitan area" ---> data the function "mean" is applied
 	An additional tip: If you sort the results of tapply() it's much easier to read the output and to find the solution.
 	sort(tapply(...), decreasing = TRUE/FALSE)
 	
+
+Unit 2 :
+
+	
+	variable=lm(DependentVar ~ IndependentVar1 + IndepVar2,data=datavar) - Linear Model
+
+	The Estimate column gives estimates of the beta values for our model. 
+	beta 0, or the coefficient for the intercept term 
+	beta 1, or the coefficient for our independent variable
+
+	SSE = sum(variable$residuals^2)
+
+	The standard error column gives a measure of how much the coefficient is likely to vary from the estimate value. The t value is the estimate divided by the standard error. It will be negative if the estimate is negative and positive if the estimate is positive.The larger the absolute value of the t value, the more likely the coefficient is to be significant. We want independent variables with a large absolute value
+
+	Correlation measures the linear relationship between two variables and is a number between -1 and +1. 
+	A correlation of +1 means a perfect positive linear relationship.
+	A correlation of -1 means a perfect negative linear relationship.
+	A correlation of 0, which means there is no linear relationship between the two variables
+
