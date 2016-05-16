@@ -1,0 +1,123 @@
+---
+title: "Unit 4 Classification and Regression Trees"
+author: "Vinyas"
+date: "12 May 2016"
+output: html_document
+---
+#####Read data
+```{r read}
+stevens=read.csv("Data Files/stevens.csv")
+ summary(stevens)
+```
+#####Split data 70-30
+```{r splitting}
+library(caTools)
+library(rpart)
+library(rpart.plot)
+set.seed(3000)
+ spl=sample.split(stevens$Reverse,SplitRatio = 0.7)
+ test=subset(stevens,spl==FALSE)
+ train=subset(stevens,spl==TRUE) 
+```
+
+#####CART model
+```{r model}
+library(rpart)
+
+library(rpart.plot)
+ StevensTree = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data = train, method="class", minbucket=25)
+ 
+ prp(StevensTree)
+```
+
+#####Make predictions
+```{r predict}
+
+ PredictCART = predict(StevensTree, newdata = test, type = "class")
+ table(test$Reverse, PredictCART)
+ 
+ #Accuracy
+ (41+71)/(41+36+22+71)
+```
+
+#ROC curve and AUC
+```{r curves}
+ library(ROCR)
+  PredictROC = predict(StevensTree, newdata = test)
+  pred = prediction(PredictROC[,2], test$Reverse)
+  perf = performance(pred, "tpr", "fpr")
+  plot(perf)
+  
+  as.numeric(performance(pred, "auc")@y.values)
+```
+
+#####Quick Question How value changes with change in seed
+```{r question}
+  StevensTree = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data = train, method="class", minbucket=5)
+ 
+ prp(StevensTree)
+
+ StevensTree = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data = train, method="class", minbucket=100)
+
+ prp(StevensTree)
+```
+
+######Random Forest
+```{r} 
+ library(randomForest)
+ train$Reverse=as.factor(train$Reverse)
+ test$Reverse=as.factor(test$Reverse)
+```
+
+######Making random forest model
+
+```{r randomforest}
+
+StevensForest = randomForest(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data = train, ntree=200, nodesize=25 )
+ 
+ PredictForest = predict(StevensForest, newdata = test)
+ table(test$Reverse, PredictForest)
+ 
+ 
+```
+
+#####Prediction
+```{r prediction}
+PredictForest = predict(StevensForest, newdata = test)
+table(test$Reverse, PredictForest)
+```
+
+#####Install cross-validation packages
+```{r cvload}
+library(caret)
+library(e1071)
+```
+
+##### Define cross-validation experiment
+
+```{r cvdefine}
+numFolds = trainControl( method = "cv", number = 10 )
+cpGrid = expand.grid( .cp = seq(0.01,0.5,0.01)) 
+```
+
+##### Perform the cross validation
+
+```{r cvperform}
+train(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data = train, method = "rpart", trControl = numFolds, tuneGrid = cpGrid )
+```
+
+##### Create a new CART model
+
+```{r cvmodel}
+StevensTreeCV = rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data = train, method="class", cp = 0.19)
+```
+
+
+##### Make predictions
+
+```{r cvpredict}
+PredictCV = predict(StevensTreeCV, newdata = test, type = "class")
+table(test$Reverse, PredictCV)
+
+```
+(59+64)/(59+18+29+64)

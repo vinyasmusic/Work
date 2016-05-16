@@ -1,0 +1,41 @@
+---
+title: "Unit 3 Assignment_Parole"
+author: "Vinyas"
+date: "10 May 2016"
+output: html_document
+---
+
+#####Read data from file
+```{r read}
+parole=read.csv("Data Files/parole.csv")
+summary(parole)
+```
+#####Convert to factor
+```{r factor}
+table(parole$violator)
+parole$crime=as.factor(parole$crime)
+parole$state=as.factor(parole$state)
+summary(parole)
+```
+#####Split the data
+```{r splitting}
+set.seed(144)
+library(caTools)
+split = sample.split(parole$violator, SplitRatio = 0.7)
+train = subset(parole, split == TRUE)
+test = subset(parole,split==FALSE)
+```
+#####Create model and predict
+```{r model}
+model1=glm(violator ~ .,data=train,family=binomial)
+summary(model1)
+predicttest=predict(model1,newdata = test,type = "response")
+table(test$violator,predicttest>0.5)
+```
+#####ROCR and AUC 
+```{r rocr}
+library(ROCR)
+ROCRpred = prediction(predicttest, test$violator)
+performance(ROCRpred, "auc")
+as.numeric(performance(ROCRpred, "auc")@y.values)
+```

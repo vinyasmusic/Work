@@ -1,0 +1,131 @@
+---
+title: "Unit 4 D2Hawkeye"
+author: "Vinyas"
+date: "14 May 2016"
+output: 
+  html_document: 
+    fig_caption: yes
+    theme: spacelab
+---
+
+```{r load}
+
+claims=read.csv("Data Files/ClaimsData.csv")
+summary(claims)
+str(claims)
+```
+
+#####percentage of people in each bucket in 2009
+```{r buckets}
+table(claims$bucket2009)*100/nrow(claims)  
+```
+
+#####Splitting the data
+```{r splitting}
+library(caTools)
+set.seed(88)
+spl=sample.split(claims$bucket2009,SplitRatio = 0.6 )
+claimstrain=subset(claims,spl==T)
+claimstest=subset(claims,spl==F)
+```
+
+#####Average age and proportion of people in the training set had at least one diagnosis code for diabetes
+
+```{r q1}
+mean(claimstrain$age)
+table(claimstrain$diabetes==1)/nrow(claimstrain)
+```
+
+#####Accuracy of baseline test
+```{r baseline}
+sum(diag(table(claimstest$bucket2009,claimstest$bucket2008)))/nrow(claimstest)
+
+#Sum of all the diagonal elements divided by number of observations in claimstest
+```
+
+#####Penalty Matrix
+
+```{r penalty_matrix}
+PenaltyMatrix = matrix(c(0,1,2,3,4,2,0,1,2,3,4,2,0,1,2,6,4,2,0,1,8,6,4,2,0), byrow=TRUE, nrow=5)
+
+PenaltyMatrix
+```
+
+#####Penalty error of baseline matrix
+```{r baseline_error}
+
+as.matrix(table(claimstest$bucket2009, claimstest$bucket2008))*PenaltyMatrix
+
+sum(as.matrix(table(claimstest$bucket2009,claimstest$bucket2008))*PenaltyMatrix)/nrow(claimstest)
+
+```
+
+If we used the baseline method of predicting the most frequent outcome for all observations. This new baseline method would predict cost bucket 1 for everyone.
+
+1. What would the accuracy of this baseline method be on the test set?
+2. What would the penalty error of this baseline method be on the test set?
+
+```{r q2}
+table(claimstest$bucket2009)[1]/nrow(claimstest)
+
+sum(as.matrix(table(claimstest$bucket2009))*as.matrix(c(0,2,4,6,8),byrow=TRUE,nrow=1))/nrow(claimstest)
+
+```
+
+#####Load library rpart and rpart.plot
+```{r rpart}
+library(rpart)
+library(rpart.plot)
+```
+
+#####Build a CART model
+
+```{r model}
+ClaimsTree = rpart(bucket2009 ~ .-reimbursement2009, data=claimstrain, method="class", cp=0.00005)
+#All variables except reimbursement2009
+
+prp(ClaimsTree)
+```
+
+#####Prediction
+```{r predict}
+
+ PredictTest = predict(ClaimsTree, newdata = claimstest, type = "class")
+
+ table(claimstest$bucket2009, PredictTest)
+ 
+ sum(diag(table(claimstest$bucket2009,PredictTest)))/nrow(claimstest)
+ #Accuracy
+ 
+```
+ 
+#####Penalty error 
+```{r penalty_error} 
+ as.matrix(table(claimstest$bucket2009, PredictTest))*PenaltyMatrix
+
+sum(as.matrix(table(claimstest$bucket2009,PredictTest))*PenaltyMatrix)/nrow(claimstest)
+#Penalty Error
+
+```
+#####New model with paramaters set to minimize the penalty error ie loss matrix
+
+```{r model2}
+ClaimsTree = rpart(bucket2009 ~ .-reimbursement2009, data=claimstrain, method="class", cp=0.00005,parms=list(loss=PenaltyMatrix))
+```
+
+
+##### Redo predictions 
+```{r predict2}
+PredictTest = predict(ClaimsTree, newdata = claimstest, type = "class")
+
+table(claimstest$bucket2009, PredictTest)
+
+#Accuracy
+sum(diag(table(claimstest$bucket2009,PredictTest)))/nrow(claimstest)
+```
+
+#####New penalty error
+```{r penalty_error2}
+
+sum(as.matrix(table(claimstest$bucket2009, PredictTest))*PenaltyMatrix)/nrow(claimstest)
+```

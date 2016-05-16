@@ -1,0 +1,132 @@
+---
+title: "Unit 3 Logistic Regression"
+author: "Vinyas"
+date: "8 May 2016"
+output: html_document
+---
+#####Reading the necessary files and their summary
+```{r}
+quality=read.csv("Data Files/quality.csv")
+summary(quality)
+str(quality)
+```
+
+```{r}
+#Loading the caTools library
+library(caTools) 
+```
+#####Randomly split data
+```{r}
+set.seed(88)
+split = sample.split(quality$PoorCare, SplitRatio = 0.75)
+split
+```
+
+#####Create training and testing sets
+```{r}
+qualityTrain = subset(quality, split == TRUE)
+qualityTest = subset(quality, split == FALSE)
+```
+#####Logistic Regression Model
+```{r}
+QualityLog = glm(PoorCare ~ OfficeVisits + Narcotics, data=qualityTrain, family=binomial) 
+
+#glm = generalised linear model
+#glm(dependentvar ~ indepvar1+indepvar2,data=datvar,family=binomial)
+#family = binomial tells the function ot create logistic regression model
+
+summary(QualityLog)
+
+```
+
+#####Make predictions and analyze on training set
+```{r}
+predictTrain = predict(QualityLog, type="response")
+#type = "response" gives us probabilities
+# Analyze predictions
+summary(predictTrain)
+tapply(predictTrain, qualityTrain$PoorCare, mean)
+```
+
+#####Quick Question
+```{r}
+#New logistic regression model
+Qlog2=glm(PoorCare~StartedOnCombination+ProviderCount,data=qualityTrain,family=binomial)
+summary(Qlog2)
+```
+
+#####Confusion matrix for threshold of 0.5
+```{r}
+table(qualityTrain$PoorCare, predictTrain > 0.5)
+```
+
+
+Sensitivity and specificity are statistical measures of the performance of a binary classification test, also known in statistics as classification function:
+
+Sensitivity (also called the true positive rate, or the recall in some fields) measures the proportion of positives that are correctly identified as such (e.g., the percentage of sick people who are correctly identified as having the condition).
+
+Specificity (also called the true negative rate) measures the proportion of negatives that are correctly identified as such (e.g., the percentage of healthy people who are correctly identified as not having the condition).
+
+True positive = correctly identified
+
+False positive = incorrectly identified
+
+True negative = correctly rejected
+
+False negative = incorrectly rejected
+
+
+Sensitivity or true positive rate (TPR)
+
+TPR = TruePositive / PositiveInstances = TP / (TP+FalseNegative)
+
+Specificity (SPC) or true negative rate
+
+SPC = TrueNegative / NegativeInstances = TN / (TN+FalsePositives)
+
+A Receiver Operator Characteristic curve,
+or ROC curve, can help you decide
+which value of the threshold is best.
+
+The sensitivity, or true positive rate of the model,
+is shown on the y-axis.
+
+And the false positive rate, or 1 minus the specificity,
+is given on the x-axis.
+
+The ROC curve always starts at the point (0, 0).
+This corresponds to a threshold value of 1 i.e. sensitivity = 0
+
+The ROC curve always ends at the point (1,1),
+which corresponds to a threshold value of 0 i.e. false positive rate = 1
+
+The higher the threshold, or closer to (0, 0),
+the higher the specificity and the lower the sensitivity.
+The lower the threshold, or closer to (1,1),
+the higher the sensitivity and lower the specificity.
+
+A Receiver Operator Characteristic curve,
+or ROC curve, can help you decide
+which value of the threshold is best.
+
+
+
+
+
+##### Prediction function
+```{r}
+library(ROCR)
+ROCRpred = prediction(predictTrain, qualityTrain$PoorCare)
+
+# Performance function
+ROCRperf = performance(ROCRpred, "tpr", "fpr")
+
+```
+
+##### Add threshold labels 
+```{r}
+plot(ROCRperf, colorize=TRUE, print.cutoffs.at=seq(0,1,by=0.1), text.adj=c(-0.2,1.7))
+
+#last argument in print.cutoffs sets the step value to 0.1
+#what is text.adj used for ?
+```
