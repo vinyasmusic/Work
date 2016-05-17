@@ -1,0 +1,59 @@
+---
+title: "Unit 4 Assignment Census"
+author: "Vinyas"
+date: "16 May 2016"
+output: html_document
+---
+####Load data and split into training and test set
+```{r load}
+library(caTools)
+library(rpart)
+library(rpart.plot)
+census=read.csv("Data Files/census.csv")
+set.seed(2000)
+split=sample.split(census$over50k,SplitRatio = 0.6)
+censustrain=subset(census,split==T)
+censustest=subset(census,split==F)
+```
+
+#####Build a logistic regression model to predict the dependent variable "over50k", using all of the other variables in the dataset as independent variables. Use the training set to build the model
+
+#####Which variables are significant, or have factors that are significant? 
+```{r glm}
+censusglm=glm(over50k~.,data = censustrain,family = "binomial")
+summary(censusglm)
+```
+
+#####What is the accuracy of the model on the testing set? Use a threshold of 0.5. 
+```{r 1.2}
+predict_census=predict(censusglm,newdata=censustest, type = "response")
+sum(diag(table(censustest$over50k,predict_census>0.5)))/nrow(censustest)
+sum(table(censustest$over50k,predict_census>0.5)[1,])/nrow(censustest)
+
+```
+
+#####What is the area-under-the-curve (AUC) for this model on the test set?
+```{r 1.4}
+library(ROCR)
+ROCRpred=prediction(predict_census,censustest$over50k)
+as.numeric(performance(ROCRpred,"auc")@y.values)
+```
+
+#####Build a classification tree to predict "over50k"
+```{r 2.1}
+census_cart=rpart(over50k~.,data=censustrain,method = "class")
+prp(census_cart)
+```
+
+```{r 2.3}
+predcart=predict(census_cart,newdata=censustest,type="class")
+table(censustest$over50k,predcart)
+sum(diag(table(censustest$over50k,predcart)))/nrow(censustest) 
+#Accuracy
+
+predict_census3=predict(census_cart,newdata=censustest)
+ROCRpred3=prediction(predict_census3[,2],censustest$over50k)
+as.numeric(performance(ROCRpred3,"auc")@y.values) #AUC
+```
+
+
