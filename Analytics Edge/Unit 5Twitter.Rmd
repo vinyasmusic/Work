@@ -2,7 +2,9 @@
 title: "Unit 5 Twitter"
 author: "Vinyas"
 date: "18 May 2016"
-output: html_document
+output:
+       md_document:
+       variant: markdown_github
 ---
 #####Loading the data
 ```{r load}
