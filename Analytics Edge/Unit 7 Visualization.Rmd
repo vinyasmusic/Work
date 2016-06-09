@@ -1,0 +1,106 @@
+
+---
+title: "Unit 7 Visualization"
+output: github_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = T,warning=FALSE,message = F)
+```
+
+All ggplot graphics consist of three elements. The first is data, in a data frame. The second is an aesthetic mapping,
+which describes how variables in the data frame are mapped to graphical attributes. This is where we'll define which variables are on the x-and y-axes, whether or not points should be colored or shaped by certain attributes, etc.
+The third element is which geometric objects we want to determine how the data values are rendered graphically.
+This is where we indicate if the plot should have points, lines, bars, boxes, etc.
+
+#####Basic Scatterplots
+
+```{r load,results="hide"}
+
+library(ggplot2)
+
+WHO = read.csv("WHO.csv")
+
+str(WHO)
+```
+
+##### Create the ggplot object with the data and the aesthetic mapping:
+```{r plot_object}
+scatterplot = ggplot(WHO, aes(x = GNI, y = FertilityRate))
+```
+
+###### Add the geom_point geometry
+```{r plot1,warning=FALSE}
+scatterplot + geom_point()
+```
+
+##### Redo the plot with blue triangles instead of circles:
+```{r plot2}
+scatterplot + geom_point(color = "blue", size = 3, shape = 17) 
+```
+##### Another option:
+```{r plot3}
+scatterplot + geom_point(color = "darkred", size = 3, shape = 8) 
+```
+
+##### Add a title to the plot:
+```{r plot4}
+scatterplot + geom_point(colour = "blue", size = 3, shape = 17) + ggtitle("Fertility Rate vs. Gross National Income")
+```
+
+##### Save our plot:
+```{r plot_save}
+fertilityGNIplot = scatterplot + geom_point(colour = "blue", size = 3, shape = 17) + ggtitle("Fertility Rate vs. Gross National Income")
+```
+
+##### We ca nknow more about colours via
+```{r extra,results="hide"}
+colours()
+```
+
+##### Color the points by region
+```{r plot5}
+ggplot(WHO, aes(x = GNI, y = FertilityRate, color = Region)) + geom_point()
+```
+
+##### Color the points according to life expectancy
+```{r plot6}
+ggplot(WHO, aes(x = GNI, y = FertilityRate, color = LifeExpectancy)) + geom_point()
+```
+
+##### Is the fertility rate of a country was a good predictor of the percentage of the population under 15?
+```{r plot7}
+ggplot(WHO, aes(x = FertilityRate, y = Under15)) + geom_point()
+```
+
+##### Let's try a log transformation:
+```{r plot_logtransform}
+ggplot(WHO, aes(x = log(FertilityRate), y = Under15)) + geom_point()
+```
+
+##### Simple linear regression model to predict the percentage of the population under 15, using the log of the fertility rate:
+```{r plot_logmodel}
+mod = lm(Under15 ~ log(FertilityRate), data = WHO)
+summary(mod)
+
+# Add this regression line to our plot:
+ggplot(WHO, aes(x = log(FertilityRate), y = Under15)) + geom_point() + stat_smooth(method = "lm")
+```
+
+##### 99% confidence interval
+```{r plot_logmodel2}
+ggplot(WHO, aes(x = log(FertilityRate), y = Under15)) + geom_point() + stat_smooth(method = "lm", level = 0.99)
+
+# No confidence interval in the plot
+ggplot(WHO, aes(x = log(FertilityRate), y = Under15)) + geom_point() + stat_smooth(method = "lm", se = FALSE)
+
+# Change the color of the regression line:
+ggplot(WHO, aes(x = log(FertilityRate), y = Under15)) + geom_point() + stat_smooth(method = "lm", colour = "orange")
+```
+
+##### One region in particular has a lot of countries with a very low fertility rate and a very low percentage of the population under 15. Which region is it?
+```{r plot8}
+ggplot(WHO, aes(x = FertilityRate, y = Under15,color=Region)) + geom_point() + scale_color_brewer(palette="Dark2")
+```
+
+

@@ -1,0 +1,60 @@
+---
+title: "Unit 7 Crime Visualization"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning=F,message=F)
+```
+
+##### Load data
+```{r load,echo=FALSE}
+mvt = read.csv("mvt.csv", stringsAsFactors=FALSE)
+
+str(mvt)
+```
+
+##### Convert the Date variable to a format that R will recognize:
+```{r date_format,echo=FALSE}
+mvt$Date = strptime(mvt$Date, format="%m/%d/%y %H:%M")
+
+# Extract the hour and the day of the week:
+mvt$Weekday = weekdays(mvt$Date)
+mvt$Hour = mvt$Date$hour
+
+# Let's take a look at the structure of our data again:
+str(mvt)
+```
+
+##### Create a simple line plot - need the total number of crimes on each day of the week. We can get this information by creating a table:
+```{r weekday}
+table(mvt$Weekday)
+
+# Save this table as a data frame:
+WeekdayCounts = as.data.frame(table(mvt$Weekday))
+
+str(WeekdayCounts) 
+```
+```{r echo=F,include=F}
+# Load the ggplot2 library:
+library(ggplot2)
+```
+
+##### Create plot
+```{r plot}
+ggplot(WeekdayCounts, aes(x=Var1, y=Freq)) + geom_line(aes(group=1))  
+
+# Make the "Var1" variable an ORDERED factor variable
+WeekdayCounts$Var1 = factor(WeekdayCounts$Var1, ordered=TRUE, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday","Saturday"))
+```
+
+##### make a new plot with the ordered variable
+```{r plot2}
+ggplot(WeekdayCounts, aes(x=Var1, y=Freq)) + geom_line(aes(group=1))
+
+# Change our x and y labels:
+ggplot(WeekdayCounts, aes(x=Var1, y=Freq)) + geom_line(aes(group=1)) + xlab("Day of the Week") + ylab("Total Motor Vehicle Thefts")
+```
+
+
+

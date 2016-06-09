@@ -1,0 +1,21 @@
+---
+title: "Unit 7 Tweet Viz"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+corpus=Corpus(VectorSource(tweets))
+corpus=tm_map(corpus,content_transformer(tolower))
+corpus = tm_map(corpus, PlainTextDocument)
+corpus=tm_map(corpus,removePunctuation)
+corpus=tm_map(corpus,removeWords,stopwords("english"))
+frequencies=DocumentTermMatrix(corpus)
+alltweets=as.data.frame(as.matrix(frequencies))
+library(wordcloud)
+wordcloud(colnames(alltweets),colSums(alltweets),scale = c(2,0.25))
+wordcloud(colnames(alltweets),colSums(alltweets),scale = c(2,0.25),random.order = F,colors = "purple")
+library("RColorBrewer")
+wordcloud(colnames(alltweets),colSums(alltweets),scale = c(2,0.25),random.order = F,colors=brewer.pal(9, "Blues")[c(5,6,7,8,9)])
